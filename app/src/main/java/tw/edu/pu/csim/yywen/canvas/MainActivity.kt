@@ -70,8 +70,14 @@ fun CanvasScreen( modifier: Modifier = Modifier) {
     LaunchedEffect(gameOver) {
         while (!gameOver) {
             delay(100L)
-            minionsX +=5
-            minionsY +=10
+            minionsX += 5
+            minionsY += 10
+
+            // 小小兵完全離開畫面(右邊或下邊)時,放回 (0, 0)
+            if (CanvasWidth > 0f && (minionsX > CanvasWidth || minionsY > CanvasHeight)) {
+                minionsX = 0f
+                minionsY = 0f
+            }
         }
     }
 

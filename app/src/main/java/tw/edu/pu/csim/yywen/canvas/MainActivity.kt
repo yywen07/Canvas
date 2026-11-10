@@ -7,12 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +31,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.delay
 import tw.edu.pu.csim.yywen.canvas.ui.theme.CanvasTheme
 
 class MainActivity : ComponentActivity() {
@@ -53,10 +57,23 @@ fun CanvasScreen( modifier: Modifier = Modifier) {
     var CanvasWidth by remember { mutableStateOf(0f) }
     var CanvasHeight by remember { mutableStateOf(0f) }
 
+    var minionsX by remember { mutableStateOf(0f) }
+    var minionsY by remember { mutableStateOf(0f) }
+
+    var gameOver by remember { mutableStateOf(false) }
 
     // 載入圖片資源 (小小兵)
     val minionsImage: ImageBitmap =
         ImageBitmap.imageResource(id = R.drawable.minions)
+
+
+    LaunchedEffect(gameOver) {
+        while (!gameOver) {
+            delay(100L)
+            minionsX +=5
+            minionsY +=10
+        }
+    }
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -89,7 +106,7 @@ fun CanvasScreen( modifier: Modifier = Modifier) {
                 strokeWidth = 10f
             )
 
-            translate(0f, 0f) {
+            translate( minionsX,  minionsY) {
                 drawImage(minionsImage)
             }
             //取得小小兵圖檔的寬度與高度
@@ -110,7 +127,17 @@ fun CanvasScreen( modifier: Modifier = Modifier) {
 
         }
 
+        Column{
+            Text("畫布寬度$CanvasWidth, 長度$CanvasHeight")
 
-        Text("畫布寬度$CanvasWidth, 長度$CanvasHeight")
+            Button(
+                onClick = {gameOver=!gameOver }
+            )
+            {
+                if (gameOver){Text("繼續遊戲")}
+                else {Text("停止遊戲")}
+            }
+        }
+
     }
 }
